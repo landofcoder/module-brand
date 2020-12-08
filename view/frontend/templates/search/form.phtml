@@ -1,0 +1,14 @@
+<?php
+$helper = $this->helper("Ves\Brand\Helper\Data");
+?>
+<div class="ves-block block brand-searchform">
+	<div class="block-title">
+		<strong><?php echo __('Search Brand'); ?></strong>
+	</div>
+	<div class="block-content">
+		<form method="get" class="search-form" action="<?php echo $helper->getSearchFormUrl(); ?>" data-mage-init='{"validation":{}}'>
+			<input type="text" class="search-field required-entry" placeholder="<?php echo __('Search brands here…'); ?>" value="<?php echo $helper->getSearchKey() ?>" name="s" title="<?php echo __('Search for:'); ?>">
+			<button type="submit" class="search-submit"><i class="fa fa-search"></i></button>
+		</form>
+	</div>
+</div>

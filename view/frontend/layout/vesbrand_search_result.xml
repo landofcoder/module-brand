@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Venustheme
+ * 
+ * NOTICE OF LICENSE
+ * 
+ * This source file is subject to the Venustheme.com license that is
+ * available through the world-wide-web at this URL:
+ * http://www.venustheme.com/license-agreement.html
+ * 
+ * DISCLAIMER
+ * 
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ * 
+ * @category   Venustheme
+ * @package    Ves_Blog
+ * @copyright  Copyright (c) 2016 Venustheme (http://www.venustheme.com/)
+ * @license    http://www.venustheme.com/LICENSE-1.0.html
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+	<body>
+		<referenceContainer name="content">
+			<block class="Ves\Brand\Block\Search\Result" name="vesbrand.search.result">
+				<block class="Ves\Brand\Block\Toolbar" name="vesbrand_toolbar" template="Ves_Brand::toolbar.phtml">
+					<block class="Magento\Theme\Block\Html\Pager" name="brand_list_toolbar_pager"/>
+				</block>
+			</block>
+		</referenceContainer>
+		<referenceContainer name="sidebar.main">
+			<block class="Ves\Brand\Block\GroupList" name="group_list" template="Ves_Brand::grouplist.phtml"/>
+			<block class="Magento\Framework\View\Element\Template" ifconfig="vesbrand/general_settings/enable_search" name="brand.searchform.main" template="Ves_Brand::search/form.phtml" before="-"/>
+		</referenceContainer>
+	</body>
+</page>
