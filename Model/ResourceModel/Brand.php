@@ -1,18 +1,18 @@
 <?php
 /**
  * Venustheme
- * 
+ *
  * NOTICE OF LICENSE
- * 
+ *
  * This source file is subject to the Venustheme.com license that is
  * available through the world-wide-web at this URL:
  * http://www.venustheme.com/license-agreement.html
- * 
+ *
  * DISCLAIMER
- * 
+ *
  * Do not edit or add to this file if you wish to upgrade this extension to newer
  * version in the future.
- * 
+ *
  * @category   Venustheme
  * @package    Ves_Brand
  * @copyright  Copyright (c) 2014 Venustheme (http://www.venustheme.com/)
@@ -205,7 +205,7 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected function _beforeSave(\Magento\Framework\Model\AbstractModel $object)
     {
 
-        $result = $this->checkUrlExits($object); 
+        $result = $this->checkUrlExits($object);
 
         if ($object->isObjectNew() && !$object->hasCreationTime()) {
             $object->setCreationTime($this->_date->gmtDate());
@@ -289,7 +289,7 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                             }
                         }
                     }catch(Exception $e){
-                        
+
                     }
                 }
 
@@ -384,6 +384,7 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @param \Magento\Framework\Model\AbstractModel $object
      * @return $this
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     protected function _afterLoad(\Magento\Framework\Model\AbstractModel $object)
     {
@@ -400,8 +401,13 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                     'brand_id = '.(int)$id
                     );
                 $products = $connection->fetchAll($select);
+                foreach ($products as $key => $product) {
+                    $pro = $this->_productRepository->getById($product['product_id']);
+                    $products[$key]['product'] = $pro->getData();
+                    $products[$key]['product']['model'] = $pro;
+                }
                 $object->setData('products', $products);
-            } 
+            }
 
         return parent::_afterLoad($object);
     }
@@ -449,7 +455,7 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             if(in_array('0', $stores)){
                 throw new \Magento\Framework\Exception\LocalizedException(
                     __('URL key for specified store already exists.')
-                    );  
+                    );
             }
             $stores[] = '0';
             $select = $connection->select()->from(
@@ -468,7 +474,7 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             if(count($result)>0){
                 throw new \Magento\Framework\Exception\LocalizedException(
                     __('URL key for specified store already exists.')
-                    );  
+                    );
             }
         }
         return $this;
