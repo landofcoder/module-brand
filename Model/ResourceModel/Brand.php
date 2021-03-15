@@ -401,12 +401,15 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                     'brand_id = '.(int)$id
                     );
                 $products = $connection->fetchAll($select);
+                $productIds = [];
                 foreach ($products as $key => $product) {
                     $pro = $this->_productRepository->getById($product['product_id']);
                     $products[$key]['product'] = $pro->getData();
                     $products[$key]['product']['model'] = $pro;
+                    $productIds[] = $product['product_id'];
                 }
                 $object->setData('products', $products);
+                $object->setData('productIds', $productIds);
             }
 
         return parent::_afterLoad($object);

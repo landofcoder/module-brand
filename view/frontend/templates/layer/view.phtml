@@ -14,7 +14,7 @@
  * @var $block \Magento\LayeredNavigation\Block\Navigation
  */
 ?>
-<?php 
+<?php
 $helper = $this->helper('Ves\Brand\Helper\Data');
 $brandAttributeCode = $helper->getStoreBrandCode();
 ?>
@@ -26,23 +26,23 @@ $brandAttributeCode = $helper->getStoreBrandCode();
 
         <div class="block-content filter-content">
             <?php echo $block->getChildHtml('state') ?>
-            
+
             <?php $filters = $block->getLayer()->getState()->getFilters() ?>
             <?php if ($filters && (count($filters) > 1)): ?>
                 <?php if ($filters[0]->getName() != $filters[1]->getName()): ?>
-                <div class="block-actions filter-actions">
-                    <a href="<?php /* @escapeNotVerified */ echo $block->getClearUrl() ?>" class="action clear filter-clear"><span><?php /* @escapeNotVerified */ echo __('Clear All') ?></span></a>
-                </div>
+                    <div class="block-actions filter-actions">
+                        <a href="<?php /* @escapeNotVerified */ echo $block->getClearUrl() ?>" class="action clear filter-clear"><span><?php /* @escapeNotVerified */ echo __('Clear All') ?></span></a>
+                    </div>
                 <?php endif ?>
             <?php endif; ?>
             <?php $wrapOptions = false; ?>
             <?php foreach ($block->getFilters() as $filter): ?>
-                <?php if (!$wrapOptions): ?>
-                    <strong role="heading" aria-level="2" class="block-subtitle filter-subtitle"><?php /* @escapeNotVerified */ echo __('Shopping Options') ?></strong>
-                    <div class="filter-options" id="narrow-by-list" data-mage-init='{"accordion":{"openedState": "active", "collapsible": true, "active": false, "multipleCollapsible": false}}'>
+        <?php if (!$wrapOptions): ?>
+            <strong role="heading" aria-level="2" class="block-subtitle filter-subtitle"><?php /* @escapeNotVerified */ echo __('Shopping Options') ?></strong>
+            <div class="filter-options" id="narrow-by-list" data-mage-init='{"accordion":{"openedState": "active", "collapsible": true, "active": false, "multipleCollapsible": false}}'>
                 <?php $wrapOptions = true; endif; ?>
-                    <?php if ($filter->getItemsCount()): ?>
-                    <?php 
+                <?php if ($filter->getItemsCount()): ?>
+                    <?php
                     //$filterUrl = $filterItem->getUrl();
                     //if(strpos($filterUrl, $brandAttributeCode) !==false) continue;
                     ?>
@@ -50,11 +50,11 @@ $brandAttributeCode = $helper->getStoreBrandCode();
                         <div data-role="title" class="filter-options-title" role="heading" aria-level="3" class="filter-options-title"><?php echo $block->escapeHtml(__($filter->getName())) ?></div>
                         <div data-role="content"  class="filter-options-content"><?php /* @escapeNotVerified */ echo $block->getChildBlock('renderer')->render($filter); ?></div>
                     </div>
-                    <?php endif; ?>
-            <?php endforeach; ?>
-            <?php if ($wrapOptions): ?>
-                </div>
-            <?php endif; ?>
+                <?php endif; ?>
+                <?php endforeach; ?>
+                <?php if ($wrapOptions): ?>
+            </div>
+        <?php endif; ?>
         </div>
     </div>
 <?php endif; ?>

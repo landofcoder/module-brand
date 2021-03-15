@@ -16,7 +16,7 @@ $brandAttributeCode = $helper->getStoreBrandCode();
 
 <ol class="items">
     <?php foreach ($filterItems as $filterItem): ?>
-        <?php 
+        <?php
         $filterUrl = $filterItem->getUrl();
         if(strpos($filterUrl, $brandAttributeCode) !==false) continue;
         ?>
