@@ -409,6 +409,7 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                     $productIds[] = $product['product_id'];
                 }
                 $object->setData('products', $products);
+                $object->setData('total_product', count($products));
                 $object->setData('productIds', $productIds);
             }
 
