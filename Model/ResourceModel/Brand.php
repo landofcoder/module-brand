@@ -20,6 +20,12 @@
  */
 namespace Ves\Brand\Model\ResourceModel;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Framework\Model\AbstractModel;
+
+/**
+ * Class Brand
+ * @package Ves\Brand\Model\ResourceModel
+ */
 class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
@@ -44,8 +50,14 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected $dateTime;
 
+    /**
+     * @var \Magento\Catalog\Model\Product\Action
+     */
     protected $_action;
 
+    /**
+     * @var ProductRepositoryInterface
+     */
     protected $_productRepository;
 
     /**
@@ -88,10 +100,10 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      *  Check whether brand url key is numeric
      *
-     * @param \Magento\Framework\Model\AbstractModel $object
+     * @param AbstractModel $object
      * @return bool
      */
-    protected function isNumericBrandUrlKey(\Magento\Framework\Model\AbstractModel $object)
+    protected function isNumericBrandUrlKey(AbstractModel $object)
     {
         return preg_match('/^[0-9]+$/', $object->getData('url_key'));
     }
@@ -181,10 +193,10 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Process brand data before deleting
      *
-     * @param \Magento\Framework\Model\AbstractModel $object
+     * @param AbstractModel $object
      * @return $this
      */
-    protected function _beforeDelete(\Magento\Framework\Model\AbstractModel $object)
+    protected function _beforeDelete(AbstractModel $object)
     {
         $condition = ['brand_id = ?' => (int)$object->getId()];
         $this->getConnection()->delete($this->getTable('ves_brand_store'), $condition);
@@ -198,11 +210,11 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Process brand data before saving
      *
-     * @param \Magento\Framework\Model\AbstractModel $object
+     * @param AbstractModel $object
      * @return $this
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    protected function _beforeSave(\Magento\Framework\Model\AbstractModel $object)
+    protected function _beforeSave(AbstractModel $object)
     {
 
         $result = $this->checkUrlExits($object);
@@ -219,10 +231,10 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Assign brand to store views
      *
-     * @param \Magento\Framework\Model\AbstractModel $object
+     * @param AbstractModel $object
      * @return $this
      */
-    protected function _afterSave(\Magento\Framework\Model\AbstractModel $object)
+    protected function _afterSave(AbstractModel $object)
     {
         $oldStores = $this->lookupStoreIds($object->getId());
         $newStores = (array)$object->getStores();
@@ -300,7 +312,12 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         return parent::_afterSave($object);
     }
 
-    public function saveProduct(\Magento\Framework\Model\AbstractModel $object, $product_id = 0) {
+    /**
+     * @param AbstractModel $object
+     * @param int $product_id
+     * @return bool
+     */
+    public function saveProduct(AbstractModel $object, $product_id = 0) {
         if($object->getId() && $product_id) {
             $table = $this->getTable('ves_brand_product');
 
@@ -331,6 +348,10 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         return false;
     }
 
+    /**
+     * @param int $product_id
+     * @return bool
+     */
     public function deleteBrandsByProduct($product_id = 0) {
         if($product_id) {
             $condition = ['product_id = ?' => (int)$product_id];
@@ -340,6 +361,10 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         return false;
     }
 
+    /**
+     * @param string $brand_name
+     * @return int|null
+     */
     public function getBrandIdByName($brand_name = '') {
         if($brand_name) {
             $brand_id = null;
@@ -365,12 +390,12 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Load an object using 'url_key' field if there's no field specified and value is not numeric
      *
-     * @param \Magento\Framework\Model\AbstractModel $object
+     * @param AbstractModel $object
      * @param mixed $value
      * @param string $field
      * @return $this
      */
-    public function load(\Magento\Framework\Model\AbstractModel $object, $value, $field = null)
+    public function load(AbstractModel $object, $value, $field = null)
     {
         if (!is_numeric($value) && is_null($field)) {
             $field = 'url_key';
@@ -382,11 +407,10 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Perform operations after object load
      *
-     * @param \Magento\Framework\Model\AbstractModel $object
+     * @param AbstractModel $object
      * @return $this
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    protected function _afterLoad(\Magento\Framework\Model\AbstractModel $object)
+    protected function _afterLoad(AbstractModel $object)
     {
         if ($object->getId()) {
             $stores = $this->lookupStoreIds($object->getId());
@@ -394,26 +418,29 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         }
 
         if ($id = $object->getId()) {
-                $connection = $this->getConnection();
-                $select = $connection->select()
-                ->from($this->getTable('ves_brand_product'))
-                ->where(
-                    'brand_id = '.(int)$id
-                    );
-                $products = $connection->fetchAll($select);
+                $products = $this->getProduct($id);
                 $productIds = [];
                 foreach ($products as $key => $product) {
-                    $pro = $this->_productRepository->getById($product['product_id']);
-                    $products[$key]['product'] = $pro->getData();
-                    $products[$key]['product']['model'] = $pro;
                     $productIds[] = $product['product_id'];
                 }
-                $object->setData('products', $products);
-                $object->setData('total_product', count($products));
                 $object->setData('productIds', $productIds);
             }
 
         return parent::_afterLoad($object);
+    }
+
+    /**
+     * @param $brandId
+     * @return array
+     */
+    public function getProduct($brandId) {
+        $connection = $this->getConnection();
+        $select = $connection->select()
+            ->from($this->getTable('ves_brand_product'))
+            ->where(
+                'brand_id = '.(int)$brandId
+            );
+        return $connection->fetchAll($select);
     }
 
     /**
@@ -437,7 +464,12 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         return $connection->fetchCol($select);
     }
 
-    public function checkUrlExits(\Magento\Framework\Model\AbstractModel $object)
+    /**
+     * @param AbstractModel $object
+     * @return $this
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function checkUrlExits(AbstractModel $object)
     {
         $stores = $object->getStores();
         $connection = $this->getConnection();
@@ -484,6 +516,10 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         return $this;
     }
 
+    /**
+     * @param int $brand_id
+     * @return int
+     */
     public function getTotalProducts($brand_id = 0){
         $total = 0;
         if($brand_id){
