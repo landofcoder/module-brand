@@ -1,18 +1,18 @@
 <?php
 /**
  * Venustheme
- * 
+ *
  * NOTICE OF LICENSE
- * 
+ *
  * This source file is subject to the Venustheme.com license that is
  * available through the world-wide-web at this URL:
  * http://www.venustheme.com/license-agreement.html
- * 
+ *
  * DISCLAIMER
- * 
+ *
  * Do not edit or add to this file if you wish to upgrade this extension to newer
  * version in the future.
- * 
+ *
  * @category   Venustheme
  * @package    Ves_Brand
  * @copyright  Copyright (c) 2014 Venustheme (http://www.venustheme.com/)
@@ -71,6 +71,10 @@ class ListProduct extends \Magento\Catalog\Block\Product\ListProduct
      * @var \Magento\Catalog\Model\Product\Visibility
      */
     protected $_catalogProductVisibility;
+    /**
+     * @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
+     */
+    private $_productCollectionFactory;
 
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context,
@@ -99,11 +103,7 @@ class ListProduct extends \Magento\Catalog\Block\Product\ListProduct
             if($brand){
                 $layer->setCurrentBrand($brand);
             }
-            $products = $brand->getData('products');
-            $productIds = [];
-            foreach ($products as $k => $v) {
-                $productIds[] = $v['product_id'];
-            }
+            $productIds = $brand->getData('productIds');
             $collection = $this->_productCollectionFactory->create();
             $collection->setVisibility($this->_catalogProductVisibility->getVisibleInCatalogIds())->addAttributeToSelect('*')->addAttributeToFilter('entity_id',['in'=>$productIds]);
             $this->_productCollection = $collection;
