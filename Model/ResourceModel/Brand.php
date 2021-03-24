@@ -423,6 +423,7 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 foreach ($products as $key => $product) {
                     $productIds[] = $product['product_id'];
                 }
+
                 $object->setData('productIds', $productIds);
             }
 
