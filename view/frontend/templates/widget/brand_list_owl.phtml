@@ -36,7 +36,9 @@ if($cmsblock === 'pretext_html' && $pretext_html){
 }elseif($cmsblock!=''){
 	$html = $this->getCmsBlockModel()->load($cmsblock)->getContent();
 }
-$html = $_helper->filter($html);
+if($html){
+	$html = $_helper->filter($html);
+}
 ?>
 <?php if ( $_brandCollection->count() ){ ?>
 <?php
