@@ -91,17 +91,18 @@ class Brandlist extends AbstractWidget
         $brandGroups = $this->getConfig('brand_groups');
         $store = $this->_storeManager->getStore();
         $collection = $this->_brandCollection->getCollection()
-        ->addFieldToFilter('status',1)
-        ->addStoreFilter($store, false);
+            ->addFieldToFilter('status',1)
+            ->addStoreFilter($store);
 
-        $brandGroups = explode(',', $brandGroups);
-        if(is_array($brandGroups))
+        $brandGroups = $brandGroups?trim($brandGroups):null;
+        if($brandGroups)
         {
+            $brandGroups = explode(',', $brandGroups);
             $collection->addFieldToFilter('group_id',array('in' => $brandGroups));
         }
         $collection->setPageSize($number_item)
-        ->setCurPage(1)
-        ->setOrder('position','ASC');
+            ->setCurPage(1)
+            ->setOrder('position','ASC');
         return $collection;
     }
 }
