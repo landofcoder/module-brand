@@ -114,6 +114,9 @@
 .ves-brandlist .brandlist .brand-toolbar {
     position: relative;
 }
+.sidebar .brand-widget .block-title {
+    text-align: left;
+}
 @media (min-width: 768px){
 	.ves-widget .brandowl-play .owl-carousel {
 		margin-bottom: auto;
