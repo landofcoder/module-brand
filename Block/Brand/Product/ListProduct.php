@@ -103,12 +103,22 @@ class ListProduct extends \Magento\Catalog\Block\Product\ListProduct
             if($brand){
                 $layer->setCurrentBrand($brand);
             }
-            $productIds = $brand->getData('productIds');
+            //$productIds = $brand->getData('productIds');
             $collection = $this->_productCollectionFactory->create();
-            $collection->setVisibility($this->_catalogProductVisibility->getVisibleInCatalogIds())->addAttributeToSelect('*')->addAttributeToFilter('entity_id',['in'=>$productIds]);
+            $resource = $collection->getResource();
+            $collection->setVisibility($this->_catalogProductVisibility->getVisibleInCatalogIds())
+                        ->addAttributeToSelect('*')
+                        ->joinTable(
+                            ['brand_products' => $resource->getTable('ves_brand_product')],
+                            'product_id = entity_id',
+                            [
+                                'brand_id' => 'brand_id'
+                            ]
+                        )
+                        ->addFieldToFilter('brand_id', ['eq' => $brand->getId()]);
+                        //->addAttributeToFilter('product_brand',['like'=>"%".$brand->getId()."%"]);
             $this->_productCollection = $collection;
-
         }
-        return $this->_productCollection;
+        return parent::_getProductCollection();
     }
 }
