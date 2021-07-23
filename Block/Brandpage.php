@@ -39,6 +39,8 @@ class Brandpage extends \Magento\Framework\View\Element\Template
      */
     protected $_brand;
 
+    protected $_collection = null;
+
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context      
      * @param \Magento\Framework\Registry                      $registry     
