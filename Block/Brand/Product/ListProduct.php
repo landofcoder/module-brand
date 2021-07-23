@@ -30,42 +30,6 @@ use Magento\Framework\DataObject\IdentityInterface;
 class ListProduct extends \Magento\Catalog\Block\Product\ListProduct
 {
     /**
-     * Default toolbar block name
-     *
-     * @var string
-     */
-    protected $_defaultToolbarBlock = 'Magento\Catalog\Block\Product\ProductList\Toolbar';
-
-    /**
-     * Product Collection
-     *
-     * @var AbstractCollection
-     */
-    protected $_productCollection;
-
-    /**
-     * Catalog layer
-     *
-     * @var \Magento\Catalog\Model\Layer
-     */
-    protected $_catalogLayer;
-
-    /**
-     * @var \Magento\Framework\Data\Helper\PostHelper
-     */
-    protected $_postDataHelper;
-
-    /**
-     * @var \Magento\Framework\Url\Helper\Data
-     */
-    protected $urlHelper;
-
-    /**
-     * @var CategoryRepositoryInterface
-     */
-    protected $categoryRepository;
-
-    /**
      * Catalog product visibility
      *
      * @var \Magento\Catalog\Model\Product\Visibility
@@ -74,7 +38,7 @@ class ListProduct extends \Magento\Catalog\Block\Product\ListProduct
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
      */
-    private $_productCollectionFactory;
+    protected $_productCollectionFactory;
 
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context,
@@ -92,9 +56,18 @@ class ListProduct extends \Magento\Catalog\Block\Product\ListProduct
         $this->_postDataHelper = $postDataHelper;
         $this->categoryRepository = $categoryRepository;
         $this->urlHelper = $urlHelper;
-        parent::__construct($context,$postDataHelper,$layerResolver,$categoryRepository,$urlHelper);
+        parent::__construct(
+                $context,
+                $postDataHelper,
+                $layerResolver,
+                $categoryRepository,
+                $urlHelper,
+                $data
+            );
     }
-
+    /**
+     * {@inheritdoc}
+     */
     protected function _getProductCollection()
     {
         if ($this->_productCollection === null) {
@@ -103,12 +76,22 @@ class ListProduct extends \Magento\Catalog\Block\Product\ListProduct
             if($brand){
                 $layer->setCurrentBrand($brand);
             }
-            $productIds = $brand->getData('productIds');
+            //$productIds = $brand->getData('productIds');
             $collection = $this->_productCollectionFactory->create();
-            $collection->setVisibility($this->_catalogProductVisibility->getVisibleInCatalogIds())->addAttributeToSelect('*')->addAttributeToFilter('entity_id',['in'=>$productIds]);
+            $resource = $collection->getResource();
+            $collection->setVisibility($this->_catalogProductVisibility->getVisibleInCatalogIds())
+                        ->addAttributeToSelect('*')
+                        ->joinTable(
+                            ['brand_products' => $resource->getTable('ves_brand_product')],
+                            'product_id = entity_id',
+                            [
+                                'brand_id' => 'brand_id'
+                            ]
+                        )
+                        ->addFieldToFilter('brand_id', ['eq' => $brand->getId()]);
+                        //->addAttributeToFilter('product_brand',['like'=>"%".$brand->getId()."%"]);
             $this->_productCollection = $collection;
-
         }
-        return $this->_productCollection;
+        return parent::_getProductCollection();
     }
 }
