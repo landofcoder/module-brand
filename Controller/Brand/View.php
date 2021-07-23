@@ -20,13 +20,20 @@
  */
 namespace Ves\Brand\Controller\Brand;
 
-use Magento\Customer\Controller\AccountInterface;
-use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
-use Magento\Framework\View\Result\PageFactory;
+use Magento\Framework\Controller\Result\JsonFactory;
 
 class View extends \Magento\Framework\App\Action\Action
 {
+    /**
+     * @var \Magento\Framework\View\Result\LayoutFactory
+     */
+    protected $resultLayoutFactory;
+
+    /**
+     * @var JsonFactory
+     */
+    protected $_resultJsonFactory;
 
     /**
      * @var \Magento\Framework\App\RequestInterface
@@ -72,13 +79,15 @@ class View extends \Magento\Framework\App\Action\Action
     protected $_brandHelper;
 
     /**
-     * @param Context                                             $context              [description]
-     * @param \Magento\Store\Model\StoreManager                   $storeManager         [description]
-     * @param \Magento\Framework\View\Result\PageFactory          $resultPageFactory    [description]
-     * @param \Ves\Brand\Model\Brand                              $brandModel           [description]
-     * @param \Magento\Framework\Registry                         $coreRegistry         [description]
-     * @param \Magento\Framework\Controller\Result\ForwardFactory $resultForwardFactory [description]
-     * @param \Ves\Brand\Helper\Data                              $brandHelper          [description]
+     * @param  Context $context,
+     * @param  \Magento\Store\Model\StoreManager $storeManager
+     * @param  \Magento\Framework\View\Result\PageFactory $resultPageFactory
+     * @param  \Ves\Brand\Model\Brand $brandModel
+     * @param  \Magento\Framework\Registry $coreRegistry,
+     * @param  \Magento\Framework\Controller\Result\ForwardFactory $resultForwardFactory
+     * @param  \Ves\Brand\Helper\Data $brandHelper
+     * @param  JsonFactory $resultJsonFactory $brandHelper
+     * @param \Magento\Framework\View\Result\LayoutFactory $resultLayoutFactory
      */
     public function __construct(
         Context $context,
@@ -87,7 +96,9 @@ class View extends \Magento\Framework\App\Action\Action
         \Ves\Brand\Model\Brand $brandModel,
         \Magento\Framework\Registry $coreRegistry,
         \Magento\Framework\Controller\Result\ForwardFactory $resultForwardFactory,
-        \Ves\Brand\Helper\Data $brandHelper
+        \Ves\Brand\Helper\Data $brandHelper,
+        JsonFactory $resultJsonFactory,
+        \Magento\Framework\View\Result\LayoutFactory $resultLayoutFactory
         ) {
         parent::__construct($context);
         $this->resultPageFactory = $resultPageFactory;
@@ -95,6 +106,8 @@ class View extends \Magento\Framework\App\Action\Action
         $this->_coreRegistry = $coreRegistry;
         $this->resultForwardFactory = $resultForwardFactory;
         $this->_brandHelper = $brandHelper;
+        $this->_resultJsonFactory = $resultJsonFactory;
+        $this->resultLayoutFactory = $resultLayoutFactory;
     }
 
     public function _initBrand()
@@ -141,7 +154,23 @@ class View extends \Magento\Framework\App\Action\Action
                 $page->addHandle(['type' => 'vesbrand_brand_layered']);
             }*/
             $page->getConfig()->addBodyClass('page-products')
-            ->addBodyClass('brand-' . $brand->getUrlKey());
+                    ->addBodyClass('brand-' . $brand->getUrlKey());
+
+            if($this->getRequest()->getParam('ajax') == 1){
+                $this->getRequest()->getQuery()->set('ajax', null);
+                $requestUri = $this->getRequest()->getRequestUri();
+                $requestUri = preg_replace('/(\?|&)ajax=1/', '', $requestUri);
+                $this->getRequest()->setRequestUri($requestUri);
+                $resultLayout = $this->resultLayoutFactory->create();
+                $brandProducts = $resultLayout->getLayout()->getBlock('brand.products');
+                $productsBlockHtml = $brandProducts?$brandProducts->toHtml():"";
+                $leftnav = $resultLayout->getLayout()->getBlock('catalog.leftnav');
+                $leftNavBlockHtml = $leftnav?$leftnav->toHtml():"";
+                return $this->_resultJsonFactory->create()->setData(['success' => true, 'html' => [
+                    'products_list' => $productsBlockHtml,
+                    'filters' => $leftNavBlockHtml
+                ]]);
+            }
             return $page;
         }elseif (!$this->getResponse()->isRedirect()) {
             return $this->resultForwardFactory->create()->forward('noroute');
