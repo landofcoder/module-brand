@@ -36,6 +36,9 @@
         <referenceContainer name="content">
             <block class="Ves\Brand\Block\Brand\View" name="brand.products" template="Ves_Brand::brand/view.phtml">
                 <block class="Ves\Brand\Block\Brand\Product\ListProduct" name="brand.products.list" as="product_list" template="Magento_Catalog::product/list.phtml">
+                    <arguments>
+                        <argument name="viewModel" xsi:type="object">Magento\Catalog\ViewModel\Product\OptionsData</argument>
+                    </arguments>
                     <container name="category.product.list.additional" as="additional" />
                     <block class="Magento\Framework\View\Element\RendererList" name="category.product.type.details.renderers" as="details.renderers">
                         <block class="Magento\Framework\View\Element\Template" name="category.product.type.details.renderers.default" as="default"/>
@@ -51,6 +54,7 @@
                     <action method="setToolbarBlockName">
                         <argument name="name" xsi:type="string">product_list_toolbar</argument>
                     </action>
+                    
                 </block>
             </block>
             <!-- Wishlist -->
