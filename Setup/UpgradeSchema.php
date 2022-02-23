@@ -1,18 +1,18 @@
 <?php
 /**
  * Venustheme
- * 
+ *
  * NOTICE OF LICENSE
- * 
+ *
  * This source file is subject to the Venustheme.com license that is
  * available through the world-wide-web at this URL:
  * http://www.venustheme.com/license-agreement.html
- * 
+ *
  * DISCLAIMER
- * 
+ *
  * Do not edit or add to this file if you wish to upgrade this extension to newer
  * version in the future.
- * 
+ *
  * @category   Venustheme
  * @package    Ves_Brand
  * @copyright  Copyright (c) 2014 Venustheme (http://www.venustheme.com/)
@@ -65,7 +65,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
             );
             $installer->getConnection()->createTable($table);
         }
-        
+
         if (version_compare($context->getVersion(), '1.0.2', '<')) {
             $installer->getConnection()->addColumn(
                 $installer->getTable('ves_brand'),
@@ -79,6 +79,69 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 ]
             );
         }
+
+        if (version_compare($context->getVersion(), '1.0.4', '<')) {
+            $this->addBrandIdForeignKey($installer);
+            $this->addProductIdForeignKey($installer);
+        }
         $installer->endSetup();
+    }
+
+    /**
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $installer
+     * @return void
+     */
+    protected function addBrandIdForeignKey($installer)
+    {
+        $table = $installer->getTable('ves_brand_product');
+        $installer->getConnection()->modifyColumn(
+            $table,
+            'brand_id',
+            [
+                'type' => Table::TYPE_INTEGER,
+                'length' => 10,
+                'unsigned' => true,
+                'nullable' => false,
+                'comment' => 'Brand ID'
+            ]
+        );
+
+        $installer->getConnection()->addForeignKey(
+            $installer->getFkName('ves_brand_product', 'brand_id', 'ves_brand', 'brand_id'),
+            'ves_brand_product',
+            'brand_id',
+            $installer->getTable('ves_brand'),
+            'brand_id',
+            Table::ACTION_CASCADE
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $installer
+     * @return void
+     */
+    protected function addProductIdForeignKey($installer)
+    {
+        $table = $installer->getTable('ves_brand_product');
+        $installer->getConnection()->modifyColumn(
+            $table,
+            'product_id',
+            [
+                'type' => Table::TYPE_INTEGER,
+                'length' => 10,
+                'unsigned' => true,
+                'nullable' => false,
+                'comment' => 'Product ID'
+            ]
+        );
+
+        $installer->getConnection()->addForeignKey(
+            $installer->getFkName('ves_brand_product', 'product_id', 'catalog_product_entity', 'entity_id'),
+            'ves_brand_product',
+            'product_id',
+            $installer->getTable('catalog_product_entity'),
+            'entity_id',
+            Table::ACTION_CASCADE
+        );
     }
 }
