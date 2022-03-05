@@ -1,18 +1,18 @@
 <?php
 /**
  * Venustheme
- * 
+ *
  * NOTICE OF LICENSE
- * 
+ *
  * This source file is subject to the Venustheme.com license that is
  * available through the world-wide-web at this URL:
  * http://www.venustheme.com/license-agreement.html
- * 
+ *
  * DISCLAIMER
- * 
+ *
  * Do not edit or add to this file if you wish to upgrade this extension to newer
  * version in the future.
- * 
+ *
  * @category   Venustheme
  * @package    Ves_Brand
  * @copyright  Copyright (c) 2014 Venustheme (http://www.venustheme.com/)
@@ -33,13 +33,13 @@ abstract class AbstractCollection extends \Magento\Framework\Model\ResourceModel
     protected $storeManager;
 
     /**
-     * @param \Magento\Framework\Data\Collection\EntityFactoryInterface    $entityFactory 
-     * @param \Psr\Log\LoggerInterface                                     $logger        
-     * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy 
-     * @param \Magento\Framework\Event\ManagerInterface                    $eventManager  
-     * @param \Magento\Store\Model\StoreManagerInterface                   $storeManager  
-     * @param \Magento\Framework\DB\Adapter\AdapterInterface|null          $connection    
-     * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb|null         $resource      
+     * @param \Magento\Framework\Data\Collection\EntityFactoryInterface    $entityFactory
+     * @param \Psr\Log\LoggerInterface                                     $logger
+     * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy
+     * @param \Magento\Framework\Event\ManagerInterface                    $eventManager
+     * @param \Magento\Store\Model\StoreManagerInterface                   $storeManager
+     * @param \Magento\Framework\DB\Adapter\AdapterInterface|null          $connection
+     * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb|null         $resource
      */
     public function __construct(
         \Magento\Framework\Data\Collection\EntityFactoryInterface $entityFactory,
@@ -142,7 +142,7 @@ abstract class AbstractCollection extends \Magento\Framework\Model\ResourceModel
         }else {
             $this->addFilter('store', ['in' => $store], 'public');
         }
-        
+
     }
 
     /**
