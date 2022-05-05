@@ -1,18 +1,18 @@
 <?php
 /**
  * Venustheme
- * 
+ *
  * NOTICE OF LICENSE
- * 
+ *
  * This source file is subject to the Venustheme.com license that is
  * available through the world-wide-web at this URL:
  * http://www.venustheme.com/license-agreement.html
- * 
+ *
  * DISCLAIMER
- * 
+ *
  * Do not edit or add to this file if you wish to upgrade this extension to newer
  * version in the future.
- * 
+ *
  * @category   Venustheme
  * @package    Ves_Brand
  * @copyright  Copyright (c) 2014 Venustheme (http://www.venustheme.com/)
@@ -26,7 +26,7 @@ use Magento\Framework\DataObject\IdentityInterface;
  * Brand Model
  */
 class Brand extends \Magento\Framework\Model\AbstractModel
-{   
+{
     /**
      * Brand's Statuses
      */
@@ -57,18 +57,21 @@ class Brand extends \Magento\Framework\Model\AbstractModel
      */
     protected $_brandHelper;
 
+    /**
+     * @var string
+     */
     protected $_eventPrefix = 'vesbrand_brand';
 
     /**
-     * @param \Magento\Framework\Model\Context                          $context                  
-     * @param \Magento\Framework\Registry                               $registry                           
-     * @param \Ves\Brand\Model\ResourceModel\Brand|null                      $resource                 
-     * @param \Ves\Brand\Model\ResourceModel\Brand\Collection|null           $resourceCollection       
-     * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory 
-     * @param \Magento\Store\Model\StoreManagerInterface                $storeManager             
-     * @param \Magento\Framework\UrlInterface                           $url                      
-     * @param \Ves\Brand\Helper\Data                                    $brandHelper              
-     * @param array                                                     $data                     
+     * @param \Magento\Framework\Model\Context                          $context
+     * @param \Magento\Framework\Registry                               $registry
+     * @param \Ves\Brand\Model\ResourceModel\Brand|null                      $resource
+     * @param \Ves\Brand\Model\ResourceModel\Brand\Collection|null           $resourceCollection
+     * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory
+     * @param \Magento\Store\Model\StoreManagerInterface                $storeManager
+     * @param \Magento\Framework\UrlInterface                           $url
+     * @param \Ves\Brand\Helper\Data                                    $brandHelper
+     * @param array                                                     $data
      */
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -80,7 +83,7 @@ class Brand extends \Magento\Framework\Model\AbstractModel
         \Magento\Framework\UrlInterface $url,
         \Ves\Brand\Helper\Data $brandHelper,
         array $data = []
-        ) {
+    ) {
         $this->_storeManager = $storeManager;
         $this->_url = $url;
         $this->_productCollectionFactory = $productCollectionFactory;
@@ -129,10 +132,16 @@ class Brand extends \Magento\Framework\Model\AbstractModel
      */
     public function getProductCollection()
     {
-        $collection = $this->_productCollectionFactory->create()->addAttributeToSelect('*')->addAttributeToFilter('product_brand',array('eq'=>$this->getId()));
+        $collection = $this->_productCollectionFactory->create()
+                                ->addAttributeToSelect('*')
+                                ->addAttributeToFilter('product_brand', array('eq'=>$this->getId()));
         return $collection;
     }
 
+    /**
+     * get brand url
+     * @return string
+     */
     public function getUrl()
     {
         $url = $this->_storeManager->getStore()->getBaseUrl();
@@ -163,7 +172,14 @@ class Brand extends \Magento\Framework\Model\AbstractModel
         return $url;
     }
 
-    public function loadByBrandName($brand_name = "") {
+    /**
+     * load by brand name
+     *
+     * @param string $brand_name
+     * @return $this
+     */
+    public function loadByBrandName($brand_name = "")
+    {
         if($brand_name) {
             $brand_id = $this->_getResource()->getBrandIdByName($brand_name);
             if($brand_id) {
@@ -173,14 +189,28 @@ class Brand extends \Magento\Framework\Model\AbstractModel
         return $this;
     }
 
-    public function saveProduct($product_id = "0") {
-        if($product_id) {
+    /**
+     * save product
+     *
+     * @param string|int $product_id
+     * @return $this
+     */
+    public function saveProduct($product_id = "0")
+    {
+        if ($product_id) {
             $this->_getResource()->saveProduct($this, $product_id);
         }
         return $this;
     }
 
-    public function deleteBrandsByProduct($product_id = "0"){
+    /**
+     * delete brands by product
+     *
+     * @param string|int $product_id
+     * @return $this
+     */
+    public function deleteBrandsByProduct($product_id = "0")
+    {
         if($product_id) {
             $this->_getResource()->deleteBrandsByProduct($product_id);
         }
