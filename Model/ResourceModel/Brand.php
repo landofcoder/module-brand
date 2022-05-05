@@ -79,7 +79,7 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         \Magento\Catalog\Model\Product\Action $productAction,
         ProductRepositoryInterface $productRepository,
         $connectionName = null
-        ) {
+    ) {
         parent::__construct($context, $connectionName);
         $this->_date = $date;
         $this->_storeManager = $storeManager;
@@ -93,7 +93,8 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @return void
      */
-    protected function _construct(){
+    protected function _construct()
+    {
         $this->_init('ves_brand','brand_id');
     }
 
@@ -123,20 +124,18 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         if ($object->getStoreId()) {
             $storeIds = [\Magento\Store\Model\Store::DEFAULT_STORE_ID, (int)$object->getStoreId()];
             $select->join(
-                ['ves_brand_store' => $this->getTable('ves_brand_store')],
-                $this->getMainTable() . '.brand_id = ves_brand_store.brand_id',
-                []
+                    ['ves_brand_store' => $this->getTable('ves_brand_store')],
+                    $this->getMainTable() . '.brand_id = ves_brand_store.brand_id',
+                    []
                 )->where(
-                'status = ?',
-                1
+                    'status = ?',
+                    1
                 )->where(
-                'ves_brand_store.store_id IN (?)',
-                $storeIds
+                    'ves_brand_store.store_id IN (?)',
+                    $storeIds
                 )->order(
-                'ves_brand_store.store_id DESC'
-                )->limit(
-                1
-                );
+                    'ves_brand_store.store_id DESC'
+                )->limit(1);
             }
 
             return $select;
@@ -153,17 +152,18 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected function _getLoadByIdentifierSelect($identifier, $store, $isActive = null)
     {
         $select = $this->getConnection()->select()->from(
-            ['cp' => $this->getMainTable()]
-            )->join(
-            ['cps' => $this->getTable('ves_brand_store')],
-            'cp.brand_id = cps.brand_id',
-            []
+            ['cp' => $this->getMainTable()] )
+            ->join(
+                ['cps' => $this->getTable('ves_brand_store')],
+                'cp.brand_id = cps.brand_id',
+                []
+            )
+            ->where(
+                'cp.identifier = ?',
+                $identifier
             )->where(
-            'cp.identifier = ?',
-            $identifier
-            )->where(
-            'cps.store_id IN (?)',
-            $store
+                'cps.store_id IN (?)',
+                $store
             );
 
             if (!is_null($isActive)) {
@@ -185,7 +185,10 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         $stores = [\Magento\Store\Model\Store::DEFAULT_STORE_ID, $storeId];
         $select = $this->_getLoadByIdentifierSelect($url_key, $stores, 1);
-        $select->reset(\Magento\Framework\DB\Select::COLUMNS)->columns('cp.brand_id')->order('cps.store_id DESC')->limit(1);
+        $select->reset(\Magento\Framework\DB\Select::COLUMNS)
+                ->columns('cp.brand_id')
+                ->order('cps.store_id DESC')
+                ->limit(1);
 
         return $this->getConnection()->fetchOne($select);
     }
@@ -216,7 +219,6 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function _beforeSave(AbstractModel $object)
     {
-
         $result = $this->checkUrlExits($object);
 
         if ($object->isObjectNew() && !$object->hasCreationTime()) {
@@ -260,21 +262,21 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
 
         // Posts Related
-        if(null !== ($object->getData('products'))){
+        if (null !== ($object->getData('products'))) {
             $table = $this->getTable('ves_brand_product');
             $where = ['brand_id = ?' => (int)$object->getId()];
             $this->getConnection()->delete($table, $where);
 
-            if($quetionProducts = $object->getData('products')){
+            if ($quetionProducts = $object->getData('products')) {
                 $where = ['brand_id = ?' => (int)$object->getId()];
                 $this->getConnection()->delete($table, $where);
                 $data = [];
-                $items = [];
+                //$items = [];
                 foreach ($quetionProducts as $k => $_post) {
                     $data[] = [
-                    'brand_id' => (int)$object->getId(),
-                    'product_id' => $k,
-                    'position' => isset($_post['product_position'])?(int)$_post['product_position']:0
+                        'brand_id' => (int)$object->getId(),
+                        'product_id' => $k,
+                        'position' => isset($_post['product_position'])?(int)$_post['product_position']:0
                     ];
 
                     //update product attributes
@@ -283,20 +285,20 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                         $_product = $this->_productRepository->getById($k);
                         $_product_brands = $_product->getData('product_brand');
                         $_brands = [];
-                        if($_product_brands){
+                        if ($_product_brands) {
                             $_brands = !is_array($_product_brands)?explode(",", $_product_brands):$_product_brands;
-                            if($_brands && in_array($object->getId(), $_brands)) {
+                            if ($_brands && in_array($object->getId(), $_brands)) {
                                 $_is_update_attribute = false;
                             }
                         }
-                        if($_is_update_attribute){
+                        if ($_is_update_attribute) {
                             $_brands[] = $object->getId();
                             $attributes = ['product_brand' => implode(",",$_brands)];
-                            if($insert){
+                            if ($insert) {
                                 foreach ($insert as $storeId) {
                                     $this->_action->updateAttributes( [$k], $attributes,  $storeId);
                                 }
-                            }else {
+                            } else {
                                 $this->_action->updateAttributes( [$k], $attributes,  0);
                             }
                         }
@@ -317,29 +319,33 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param int $product_id
      * @return bool
      */
-    public function saveProduct(AbstractModel $object, $product_id = 0) {
-        if($object->getId() && $product_id) {
+    public function saveProduct(AbstractModel $object, $product_id = 0)
+    {
+        if ($object->getId() && $product_id) {
             $table = $this->getTable('ves_brand_product');
 
-            $select = $this->getConnection()->select()->from(
-            ['cp' => $table]
-            )->where(
-            'cp.brand_id = ?',
-            (int)$object->getId()
-            )->where(
-            'cp.product_id = (?)',
-            (int)$product_id
-            )->limit(1);
+            $select = $this->getConnection()
+                ->select()
+                ->from(['cp' => $table])
+                ->where(
+                    'cp.brand_id = ?',
+                    (int)$object->getId()
+                )
+                ->where(
+                    'cp.product_id = (?)',
+                    (int)$product_id
+                )
+                ->limit(1);
 
             $row_product = $this->getConnection()->fetchAll($select);
 
-            if(!$row_product) { // check if not exists product, then insert it into database
+            if (!$row_product) { // check if not exists product, then insert it into database
                 $data = [];
                 $data[] = [
                     'brand_id' => (int)$object->getId(),
                     'product_id' => (int)$product_id,
                     'position' => 0
-                    ];
+                ];
 
                 $this->getConnection()->insertMultiple($table, $data);
             }
@@ -352,8 +358,9 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param int $product_id
      * @return bool
      */
-    public function deleteBrandsByProduct($product_id = 0) {
-        if($product_id) {
+    public function deleteBrandsByProduct($product_id = 0)
+    {
+        if ($product_id) {
             $condition = ['product_id = ?' => (int)$product_id];
             $this->getConnection()->delete($this->getTable('ves_brand_product'), $condition);
             return true;
@@ -365,20 +372,21 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param string $brand_name
      * @return int|null
      */
-    public function getBrandIdByName($brand_name = '') {
-        if($brand_name) {
+    public function getBrandIdByName($brand_name = '')
+    {
+        if ($brand_name) {
             $brand_id = null;
             $table = $this->getTable('ves_brand');
 
             $select = $this->getConnection()->select()->from(
-            ['cp' => $table]
+                ['cp' => $table]
             )->where(
-            'cp.name = ?',
-            $brand_name
+                'cp.name = ?',
+                $brand_name
             )->limit(1);
 
             $row_brand = $this->getConnection()->fetchAll($select);
-            if($row_brand) { // check if have brand record
+            if ($row_brand) { // check if have brand record
 
                 $brand_id = isset($row_brand[0]['brand_id'])?(int)$row_brand[0]['brand_id']:null;
             }
@@ -418,14 +426,15 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         }
 
         if ($id = $object->getId()) {
-                $products = $this->getProduct($id);
-                $productIds = [];
-                foreach ($products as $key => $product) {
-                    $productIds[] = $product['product_id'];
-                }
-
-                $object->setData('productIds', $productIds);
+            $products = $this->getProduct($id);
+            $productIds = [];
+            foreach ($products as $key => $product) {
+                $productIds[] = $product['product_id'];
             }
+
+            $object->setData('productIds', $productIds);
+            $object->setData('products', $products);
+        }
 
         return parent::_afterLoad($object);
     }
@@ -434,7 +443,8 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param $brandId
      * @return array
      */
-    public function getProduct($brandId) {
+    public function getProduct($brandId)
+    {
         $connection = $this->getConnection();
         $select = $connection->select()
             ->from($this->getTable('ves_brand_product'))
@@ -521,9 +531,10 @@ class Brand extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param int $brand_id
      * @return int
      */
-    public function getTotalProducts($brand_id = 0){
+    public function getTotalProducts($brand_id = 0)
+    {
         $total = 0;
-        if($brand_id){
+        if ($brand_id) {
             $connection = $this->getConnection();
             $select = $connection->select()->from(
                 $this->getTable('ves_brand_product'),
