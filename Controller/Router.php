@@ -176,10 +176,10 @@ class Router implements RouterInterface
             if( (count($identifiers) == 2 && $identifiers[0] == $url_prefix) || (trim($url_prefix) == '' && count($identifiers) == 1)){
                 $brandUrl = '';
                 if(trim($url_prefix) == '' && count($identifiers) == 1){
-                    $brandUrl = @str_replace($url_suffix, '', $identifiers[0]);
+                    $brandUrl = $url_suffix ? @str_replace($url_suffix, '', $identifiers[0]) : $identifiers[0];
                 }
                 if(count($identifiers) == 2){
-                    $brandUrl = @str_replace($url_suffix, '', $identifiers[1]);
+                    $brandUrl = $url_suffix ? @str_replace($url_suffix, '', $identifiers[1]) : $identifiers[1];
                 }
                 if ($brandUrl) {
                     $group = $this->_groupCollection->getCollection()
