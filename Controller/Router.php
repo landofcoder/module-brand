@@ -1,18 +1,18 @@
 <?php
 /**
  * Venustheme
- * 
+ *
  * NOTICE OF LICENSE
- * 
+ *
  * This source file is subject to the Venustheme.com license that is
  * available through the world-wide-web at this URL:
  * http://www.venustheme.com/license-agreement.html
- * 
+ *
  * DISCLAIMER
- * 
+ *
  * Do not edit or add to this file if you wish to upgrade this extension to newer
  * version in the future.
- * 
+ *
  * @category   Venustheme
  * @package    Ves_Brand
  * @copyright  Copyright (c) 2014 Venustheme (http://www.venustheme.com/)
@@ -79,13 +79,13 @@ class Router implements RouterInterface
     protected $storeManager;
 
     /**
-     * @param ActionFactory          $actionFactory   
-     * @param ResponseInterface      $response        
-     * @param ManagerInterface       $eventManager    
-     * @param \Ves\Brand\Model\Brand $brandCollection 
-     * @param \Ves\Brand\Model\Group $groupCollection 
-     * @param \Ves\Brand\Helper\Data $brandHelper     
-     * @param StoreManagerInterface  $storeManager    
+     * @param ActionFactory          $actionFactory
+     * @param ResponseInterface      $response
+     * @param ManagerInterface       $eventManager
+     * @param \Ves\Brand\Model\Brand $brandCollection
+     * @param \Ves\Brand\Model\Group $groupCollection
+     * @param \Ves\Brand\Helper\Data $brandHelper
+     * @param StoreManagerInterface  $storeManager
      */
     public function __construct(
     	ActionFactory $actionFactory,
@@ -176,10 +176,10 @@ class Router implements RouterInterface
             if( (count($identifiers) == 2 && $identifiers[0] == $url_prefix) || (trim($url_prefix) == '' && count($identifiers) == 1)){
                 $brandUrl = '';
                 if(trim($url_prefix) == '' && count($identifiers) == 1){
-                    $brandUrl = str_replace($url_suffix, '', $identifiers[0]);
+                    $brandUrl = @str_replace($url_suffix, '', $identifiers[0]);
                 }
                 if(count($identifiers) == 2){
-                    $brandUrl = str_replace($url_suffix, '', $identifiers[1]);
+                    $brandUrl = @str_replace($url_suffix, '', $identifiers[1]);
                 }
                 if ($brandUrl) {
                     $group = $this->_groupCollection->getCollection()
