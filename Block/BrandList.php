@@ -1,18 +1,18 @@
 <?php
 /**
  * Venustheme
- * 
+ *
  * NOTICE OF LICENSE
- * 
+ *
  * This source file is subject to the Venustheme.com license that is
  * available through the world-wide-web at this URL:
  * http://www.venustheme.com/license-agreement.html
- * 
+ *
  * DISCLAIMER
- * 
+ *
  * Do not edit or add to this file if you wish to upgrade this extension to newer
  * version in the future.
- * 
+ *
  * @category   Venustheme
  * @package    Ves_Brand
  * @copyright  Copyright (c) 2014 Venustheme (http://www.venustheme.com/)
@@ -48,11 +48,11 @@ class BrandList extends \Magento\Framework\View\Element\Template
     protected $httpContext;
 
     /**
-     * @param \Magento\Framework\View\Element\Template\Context $context         
-     * @param \Magento\Framework\Registry                      $registry        
-     * @param \Ves\Brand\Helper\Data                           $brandHelper     
-     * @param \Ves\Brand\Model\Brand                           $brandCollection 
-     * @param array                                            $data            
+     * @param \Magento\Framework\View\Element\Template\Context $context
+     * @param \Magento\Framework\Registry                      $registry
+     * @param \Ves\Brand\Helper\Data                           $brandHelper
+     * @param \Ves\Brand\Model\Brand                           $brandCollection
+     * @param array                                            $data
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
@@ -61,7 +61,7 @@ class BrandList extends \Magento\Framework\View\Element\Template
         \Ves\Brand\Model\Brand $brandCollection,
         \Magento\Framework\App\Http\Context $httpContext,
         array $data = []
-        ) {
+    ) {
         $this->_brandCollection = $brandCollection;
         $this->_brandHelper = $brandHelper;
         $this->_coreRegistry = $registry;
@@ -69,37 +69,46 @@ class BrandList extends \Magento\Framework\View\Element\Template
         parent::__construct($context, $data);
     }
 
-    public function _construct(){
+    /**
+     * @inheritdoc
+     */
+    public function _construct()
+    {
         if(!$this->getConfig('general_settings/enable') || !$this->getConfig('brand_block/enable')) return;
         parent::_construct();
         $carousel_layout = $this->getConfig('brand_block/carousel_layout');
         $template = '';
-        if($carousel_layout == 'owl_carousel'){
+        if ($carousel_layout == 'owl_carousel') {
             $template = 'block/brand_list_owl.phtml';
-        }else{
+        } else {
             $template = 'block/brand_list_bootstrap.phtml';
         }
-        if(!$this->getTemplate() && $template!=''){
+        if (!$this->getTemplate() && $template!='') {
             $this->setTemplate($template);
         }
     }
 
-    public function isFilterFeatured(){
-        if($this->hasData("filter_featured")){
+    /**
+     * is filter featured
+     * @return bool
+     */
+    public function isFilterFeatured()
+    {
+        if($this->hasData("filter_featured")) {
             return (int)$this->getData("filter_featured");
         }
         return 0;
     }
 
     public function getConfig($key, $default = '')
-    {   
+    {
         $widget_key = explode('/', $key);
         if( (count($widget_key)==2) && ($resultData = $this->hasData($widget_key[1])) )
         {
             return $this->getData($widget_key[1]);
         }
         $result = $this->_brandHelper->getConfig($key);
-        if($result == ""){
+        if ($result == "") {
             return $default;
         }
         return $result;
@@ -116,7 +125,7 @@ class BrandList extends \Magento\Framework\View\Element\Template
                                                 ->setOrder('position','ASC')
                                                 ->addStoreFilter($store)
                                                 ->addFieldToFilter('status',1);
-            
+
             if(is_array($brandGroups) && count($brandGroups)>0)
             {
                 $collection->addFieldToFilter('group_id', array('in' => $brandGroups));
@@ -148,10 +157,5 @@ class BrandList extends \Magento\Framework\View\Element\Template
         'template' => $this->getTemplate(),
         $this->getProductsCount()
         ];
-    }
-
-    public function _toHtml()
-    {
-        return parent::_toHtml();
     }
 }
