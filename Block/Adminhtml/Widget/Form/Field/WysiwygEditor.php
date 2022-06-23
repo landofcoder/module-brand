@@ -1,18 +1,18 @@
 <?php
 /**
  * Venustheme
- * 
+ *
  * NOTICE OF LICENSE
- * 
+ *
  * This source file is subject to the Venustheme.com license that is
  * available through the world-wide-web at this URL:
  * http://www.venustheme.com/license-agreement.html
- * 
+ *
  * DISCLAIMER
- * 
+ *
  * Do not edit or add to this file if you wish to upgrade this extension to newer
  * version in the future.
- * 
+ *
  * @category   Venustheme
  * @package    Ves_Brand
  * @copyright  Copyright (c) 2014 Venustheme (http://www.venustheme.com/)
@@ -46,13 +46,13 @@ class WysiwygEditor extends Template implements RendererInterface
     protected $_backendData = null;
 
     /**
-     * @param \Magento\Backend\Block\Template\Context                $context           
-     * @param \Magento\Framework\Data\Form\Element\Factory           $factoryElement    
-     * @param \Magento\Framework\Data\Form\Element\CollectionFactory $factoryCollection 
-     * @param Escaper                                                $escaper           
-     * @param \Magento\Cms\Model\Wysiwyg\Config                      $wysiwygConfig     
-     * @param \Magento\Framework\View\LayoutInterface                $layout            
-     * @param \Magento\Backend\Helper\Data                           $backendData       
+     * @param \Magento\Backend\Block\Template\Context                $context
+     * @param \Magento\Framework\Data\Form\Element\Factory           $factoryElement
+     * @param \Magento\Framework\Data\Form\Element\CollectionFactory $factoryCollection
+     * @param Escaper                                                $escaper
+     * @param \Magento\Cms\Model\Wysiwyg\Config                      $wysiwygConfig
+     * @param \Magento\Framework\View\LayoutInterface                $layout
+     * @param \Magento\Backend\Helper\Data                           $backendData
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
@@ -68,7 +68,8 @@ class WysiwygEditor extends Template implements RendererInterface
         parent::__construct($context);
     }
 
-    public function render(AbstractElement $element){
+    public function render(AbstractElement $element)
+    {
         $html = '';
         $config = $this->_wysiwygConfig->getConfig();
         $config['height'] = '300px';
@@ -90,7 +91,7 @@ class WysiwygEditor extends Template implements RendererInterface
 
         $html .= '<div class="admin__field-control control">';
         $html .= '<textarea id="' . $element->getHtmlId() . '" name="' . $element->getName() . '" class="textarea admin__control-textarea wysiwyg-editor ' . $class . '" rows="5" cols="15" data-ui-id="product-tabs-attributes-tab-fieldset-element-textarea-' . $element->getName() . '" aria-hidden="true">'.$value.'</textarea>';
-  
+
             $html .= $this->getLayout()->createBlock(
                 'Magento\Backend\Block\Widget\Button',
                 '',
