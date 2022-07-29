@@ -1,5 +1,5 @@
 {
-    "name": "venustheme/module-brand",
+    "name": "landofcoder/module-ves-brand",
     "description": "Brand Extension, shop by brand for magento 2",
     "require": {
         "venustheme/module-all": "1.*"
