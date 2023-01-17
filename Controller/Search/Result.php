@@ -94,7 +94,7 @@ class Result extends \Magento\Framework\App\Action\Action
         $page = $this->resultPageFactory->create();
         $brandHelper = $this->_brandHelper;
         $request = $this->getRequest();
-        if(!$brandHelper->getConfig('general_settings/enable') || !trim($this->_request->getParam('s'))){
+        if(!$brandHelper->getConfig('general_settings/enable') || !trim($this->_request->getParam('s') ?? '')){
             $resultForward = $this->resultForwardFactory->create();
             return $resultForward->forward('defaultnoroute');
         }

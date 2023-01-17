@@ -207,7 +207,7 @@ class Result extends \Magento\Framework\View\Element\Template
         ->setOrder('position','ASC');
         $this->setCollection($brandCollection);
 
-        $searchKey = $this->_request->getParam('s');
+        $searchKey = $this->_request->getParam('s') ?? '';
 
         $brandCollection->addFieldToFilter(['name', 'description', 'url_key'], [
                                     ['like'=>'%'.addslashes($searchKey).'%'],
