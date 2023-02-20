@@ -54,6 +54,11 @@
 
                 </block>
             </block>
+            <referenceBlock name="brand.products.list">
+                <arguments>
+                    <argument name="viewModel" xsi:type="object">Magento\Catalog\ViewModel\Product\OptionsData</argument>
+                </arguments>
+            </referenceBlock>
             <!-- Wishlist -->
 			<block class="Magento\Cookie\Block\RequireCookie" name="require-cookie" template="Magento_Cookie::require_cookie.phtml">
                 <arguments>
