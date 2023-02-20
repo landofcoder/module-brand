@@ -5,3 +5,6 @@
 
 # Version 1.0.4 - 02/23/2022
 - Upgrade database schema, add foreign keys for brand_id, product_id in table ves_brand_product
+
+# Version 1.0.8 - 02/20/2023
+- Fix missing viewModel issue on Magento 2.4.x and above
