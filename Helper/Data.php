@@ -51,6 +51,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     protected $_request;
 
+    protected $_attributeFactory;
+
     protected $_moduleList;
 
     public function __construct(
