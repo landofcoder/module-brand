@@ -39,6 +39,16 @@ class InstallData implements InstallDataInterface
 	 */
 	private $brandFactory;
 
+    /**
+     * @var GroupFactory
+     */
+    protected $groupFactory;
+
+    /**
+     * @var EavSetupFactory
+     */
+    protected $eavSetupFactory;
+
 	/**
 	 * @param BrandFactory $brandFactory
 	 * @param GroupFactory $groupFactory
@@ -47,13 +57,15 @@ class InstallData implements InstallDataInterface
 		BrandFactory $brandFactory,
 		GroupFactory $groupFactory,
 		EavSetupFactory $eavSetupFactory
-		)
-	{
+	) {
 		$this->brandFactory = $brandFactory;
 		$this->groupFactory = $groupFactory;
 		$this->eavSetupFactory = $eavSetupFactory;
 	}
 
+    /**
+     * @inheritdoc
+     */
 	public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
 	{
 		$eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
