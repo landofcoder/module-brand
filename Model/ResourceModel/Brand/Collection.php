@@ -33,6 +33,8 @@ class Collection extends AbstractCollection
      */
 	protected $_idFieldName = 'brand_id';
 
+    protected $_previewFlag = false;
+
 	/**
      * Define resource model
      *
