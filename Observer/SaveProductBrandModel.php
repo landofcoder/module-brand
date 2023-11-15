@@ -75,9 +75,8 @@ class SaveProductBrandModel implements ObserverInterface
         $table_name = $this->_resource->getTableName('ves_brand_product');
         $_product = $observer->getProduct();  // you will get product object
         $productId = $_product->getId();
-        $isParentsProduct = $_product->getTypeId() == 'simple' || $_product->getTypeId() == 'configurable';
         $is_saved_brand = $this->_coreRegistry->registry('fired_save_action');
-        if(!$is_saved_brand && $isParentsProduct) {
+        if(!$is_saved_brand) {
             $data = $this->_request->getPost();
             if($productId) {
                 $connection->query('DELETE FROM ' . $table_name . ' WHERE product_id =  ' . (int)$productId . ' ');

@@ -67,8 +67,7 @@ class SaveProductBrand implements ObserverInterface
         $connection = $this->_resource->getConnection();
         $table_name = $this->_resource->getTableName('ves_brand_product');
         $productController = $observer->getController();
-        $_product = $observer->getProduct();  // you will get product object
-        $productId = $_product->getId();
+        $productId = $productController->getRequest()->getParam('id');
         $data = $productController->getRequest()->getPostValue();
 
         $this->_coreRegistry->register('current_post_product', $data);
