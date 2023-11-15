@@ -1,18 +1,18 @@
 <?php
 /**
  * Venustheme
- * 
+ *
  * NOTICE OF LICENSE
- * 
+ *
  * This source file is subject to the Venustheme.com license that is
  * available through the world-wide-web at this URL:
  * http://www.venustheme.com/license-agreement.html
- * 
+ *
  * DISCLAIMER
- * 
+ *
  * Do not edit or add to this file if you wish to upgrade this extension to newer
  * version in the future.
- * 
+ *
  * @category   Venustheme
  * @package    Ves_Brand
  * @copyright  Copyright (c) 2014 Venustheme (http://www.venustheme.com/)
@@ -75,9 +75,10 @@ class SaveProductBrandModel implements ObserverInterface
         $table_name = $this->_resource->getTableName('ves_brand_product');
         $_product = $observer->getProduct();  // you will get product object
         $productId = $_product->getId();
+        $isParentsProduct = $_product->getTypeId() == 'simple' || $_product->getTypeId() == 'configurable';
         $is_saved_brand = $this->_coreRegistry->registry('fired_save_action');
-        if(!$is_saved_brand) {
-            $data = $this->_request->getPost();;
+        if(!$is_saved_brand && $isParentsProduct) {
+            $data = $this->_request->getPost();
             if($productId) {
                 $connection->query('DELETE FROM ' . $table_name . ' WHERE product_id =  ' . (int)$productId . ' ');
             }
